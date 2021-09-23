@@ -30,6 +30,7 @@ public class PriceProcessorWrapper {
          So, for the cases where onPrice takes significant time, this lock will be mostly available
          */
         if (pairsLock.tryLock()) {
+            System.out.println(this.toString() + ": basic onUpdate()");
             try {
                 pairs2Values.put(pair, value);
                 waitForPairCondition.signal();
@@ -37,6 +38,7 @@ public class PriceProcessorWrapper {
                 pairsLock.unlock();
             }
         } else {
+            System.out.println(this.toString() + ": async onUpdate()");
             // If lock is not free, schedule update in separate thread
             // So onUpdate() never blocks
             executor.execute(() -> {
